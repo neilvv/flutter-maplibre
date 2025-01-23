@@ -15,6 +15,7 @@ final class GeoJsonSource extends Source {
     required this.data,
     this.maxZoom = 18,
     this.attribution,
+    this.cluster = false,
   });
 
   /// A URL to a GeoJSON file, or GeoJSON string.
@@ -28,6 +29,9 @@ final class GeoJsonSource extends Source {
 
   /// Contains an attribution to be displayed when the map is shown to a user.
   final String? attribution;
+
+  /// Enable clustering for this source
+  final bool cluster;
 
   // TODO add more fields https://maplibre.org/maplibre-style-spec/sources/#buffer
 }
