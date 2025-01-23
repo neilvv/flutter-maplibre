@@ -131,6 +131,10 @@ abstract interface class MapController {
   /// Queries the map for rendered features.
   Future<List<QueriedLayer>> queryLayers(Offset screenLocation);
 
+  /// Queries the map for rendered features.
+  Future<List<Feature>> queryRenderedFeatures(
+      Offset screenLocation, List<String> layersIds);
+
   /// Show the user location on the map
   Future<void> enableLocation({
     Duration fastestInterval = const Duration(milliseconds: 750),

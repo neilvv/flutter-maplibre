@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -465,6 +466,48 @@ final class MapLibreMapStateAndroid extends MapLibreMapStateNative {
         queriedLayers.add(queriedLayer);
       }
       return queriedLayers;
+    });
+    return result;
+  }
+
+  @override
+  Future<List<Feature>> queryRenderedFeatures(
+      Offset screenLocation, List<String> layerIds) async {
+    // https://maplibre.org/maplibre-gl-js/docs/examples/queryQueriedLayers/
+    final jniMapLibreMap = _jniMapLibreMap!;
+    final style = this.style;
+    if (style == null) return [];
+
+    final result = await runOnPlatformThread<List<Feature>>(() {
+      final queryLayerIds =
+          JArray<JString?>(JString.nullableType, layerIds.length);
+      for (var i = 0; i < layerIds.length; i++) {
+        queryLayerIds[i] = layerIds[i].toJString();
+      }
+
+      final jniFeatures = jniMapLibreMap.queryRenderedFeatures(
+        jni.PointF.new$1(screenLocation.dx, screenLocation.dy),
+        queryLayerIds, // query one layer at a time
+      )!;
+      queryLayerIds.release();
+      if (jniFeatures.isEmpty) return []; // layer hasn't been clicked if empty
+
+      final features = <Feature>[];
+
+      for (var i = 0; i < jniFeatures.length; i++) {
+        final jniFeature = jniFeatures[i]!;
+        //JObject? props = jniFeature.properties();
+        String featureJsonStr =
+            jniFeature.toJson()!.toDartString(releaseOriginal: true);
+        Map<String, dynamic> featureJson =
+            json.decode(featureJsonStr) as Map<String, dynamic>;
+        final f = Feature.fromJson(featureJson);
+        features.add(f);
+
+        jniFeature.release();
+      }
+      jniFeatures.release();
+      return features;
     });
     return result;
   }
