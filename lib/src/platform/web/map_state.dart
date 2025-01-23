@@ -436,4 +436,11 @@ final class MapLibreMapStateWeb extends MapLibreMapState {
         )
         .toList(growable: false);
   }
+
+  @override
+  Future<List<Feature<GeometryObject>>> queryRenderedFeatures(
+      Offset screenLocation, List<String> layersIds) {
+    // TODO: implement queryRenderedFeatures
+    throw UnimplementedError();
+  }
 }
