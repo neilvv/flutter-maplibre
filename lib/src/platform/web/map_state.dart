@@ -11,6 +11,7 @@ import 'package:maplibre/src/map_state.dart';
 import 'package:maplibre/src/platform/web/extensions.dart';
 import 'package:maplibre/src/platform/web/interop/interop.dart' as interop;
 import 'package:maplibre/src/platform/web/interop/json.dart';
+import 'package:maplibre/src/style/sources/query_source_feature_options.dart';
 import 'package:web/web.dart';
 
 part 'style_controller.dart';
@@ -435,5 +436,19 @@ final class MapLibreMapStateWeb extends MapLibreMapState {
           ),
         )
         .toList(growable: false);
+  }
+
+  @override
+  Future<List<Feature<GeometryObject>>> queryRenderedFeatures(
+      Offset screenLocation, List<String> layersIds) {
+    // TODO: implement queryRenderedFeatures
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Feature<GeometryObject>>> querySourceFeatures(
+      String sourceId, QuerySourceFeatureOptions? options) {
+    // TODO: implement querySourceFeatures
+    throw UnimplementedError();
   }
 }

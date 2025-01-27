@@ -227,4 +227,10 @@ class StyleControllerAndroid implements StyleController {
   void setProjection(MapProjection projection) {
     // no implementation needed, globe is not supported on web.
   }
+
+  @override
+  Source? getSource(String id) {
+    final source = _jniStyle.getSourceAs(id.toJString(), T: jni.Source.type)!;
+    return source;
+  }
 }

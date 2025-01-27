@@ -258,4 +258,10 @@ class StyleControllerWeb implements StyleController {
   @override
   void setProjection(MapProjection projection) => _map
       .setProjection(interop.ProjectionSpecification(type: projection.name));
+
+  @override
+  Future<Source?> getSource(String id) {
+    // TODO: implement getSource
+    throw UnimplementedError();
+  }
 }

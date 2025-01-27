@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,7 @@ import 'package:maplibre/src/platform/android/extensions.dart';
 import 'package:maplibre/src/platform/android/jni/jni.dart' as jni;
 import 'package:maplibre/src/platform/map_state_native.dart';
 import 'package:maplibre/src/platform/pigeon.g.dart' as pigeon;
+import 'package:maplibre/src/style/sources/query_source_feature_options.dart';
 
 part 'style_controller.dart';
 
@@ -466,6 +468,75 @@ final class MapLibreMapStateAndroid extends MapLibreMapStateNative {
       }
       return queriedLayers;
     });
+    return result;
+  }
+
+  @override
+  Future<List<Feature>> queryRenderedFeatures(
+      Offset screenLocation, List<String> layerIds) async {
+    // https://maplibre.org/maplibre-gl-js/docs/examples/queryQueriedLayers/
+    final jniMapLibreMap = _jniMapLibreMap!;
+    final style = this.style;
+    if (style == null) return [];
+
+    final result = await runOnPlatformThread<List<Feature>>(() {
+      final queryLayerIds =
+          JArray<JString?>(JString.nullableType, layerIds.length);
+      for (var i = 0; i < layerIds.length; i++) {
+        queryLayerIds[i] = layerIds[i].toJString();
+      }
+
+      final jniFeatures = jniMapLibreMap.queryRenderedFeatures(
+        jni.PointF.new$1(screenLocation.dx, screenLocation.dy),
+        queryLayerIds, // query one layer at a time
+      )!;
+      queryLayerIds.release();
+      if (jniFeatures.isEmpty) return []; // layer hasn't been clicked if empty
+
+      final features = <Feature>[];
+
+      for (var i = 0; i < jniFeatures.length; i++) {
+        final jniFeature = jniFeatures[i]!;
+        //JObject? props = jniFeature.properties();
+        String featureJsonStr =
+            jniFeature.toJson()!.toDartString(releaseOriginal: true);
+        Map<String, dynamic> featureJson =
+            json.decode(featureJsonStr) as Map<String, dynamic>;
+        final f = Feature.fromJson(featureJson);
+        features.add(f);
+
+        jniFeature.release();
+      }
+      jniFeatures.release();
+      return features;
+    });
+    return result;
+  }
+
+  @override
+  Future<List<Feature<GeometryObject>>> querySourceFeatures(
+    String sourceId,
+    QuerySourceFeatureOptions? options,
+  ) async {
+    //final jniMapLibreMap = _jniMapLibreMap!;
+    final styleController = style;
+
+    if (styleController == null) return [];
+
+    final result = await runOnPlatformThread<List<Feature>>(() async {
+      jni.VectorSource jniVectorSource =
+          (styleController.getSource(sourceId)) as jni.VectorSource;
+
+      final jniFeatures = jniVectorSource.querySourceFeatures(
+          JArray<JString>(JString.type, 0), null);
+      return jniFeatures.map((feature) {
+        final featureJsonStr =
+            feature.toJson()!.toDartString(releaseOriginal: true);
+        final featureJson = json.decode(featureJsonStr) as Map<String, dynamic>;
+        return Feature.fromJson(featureJson);
+      }).toList();
+    });
+
     return result;
   }
 

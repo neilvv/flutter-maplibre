@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:maplibre/maplibre.dart';
 import 'package:maplibre/src/inherited_model.dart';
+import 'package:maplibre/src/style/sources/query_source_feature_options.dart';
 
 /// The [MapController] can be used to control, update and manipulate a
 /// rendered [MapLibreMap].
@@ -130,6 +131,16 @@ abstract interface class MapController {
 
   /// Queries the map for rendered features.
   Future<List<QueriedLayer>> queryLayers(Offset screenLocation);
+
+  /// Queries the map for rendered features.
+  Future<List<Feature>> queryRenderedFeatures(
+      Offset screenLocation, List<String> layersIds);
+
+  /// Returns an array of MapGeoJSONFeature objects representing features within the specified vector tile or GeoJSON source that satisfy the query parameters.
+  Future<List<Feature>> querySourceFeatures(
+    String sourceId,
+    QuerySourceFeatureOptions? options,
+  );
 
   /// Show the user location on the map
   Future<void> enableLocation({

@@ -10,6 +10,9 @@ abstract interface class StyleController {
   /// Add a new source to the map.
   Future<void> addSource(Source source);
 
+  /// get source by id
+  Future<Source?> getSource(String id);
+
   /// Add a new layer to the map. The source must be added before adding it to
   /// the map.
   ///
