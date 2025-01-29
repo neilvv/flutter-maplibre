@@ -14,7 +14,6 @@ import 'package:maplibre/src/platform/android/extensions.dart';
 import 'package:maplibre/src/platform/android/jni/jni.dart' as jni;
 import 'package:maplibre/src/platform/map_state_native.dart';
 import 'package:maplibre/src/platform/pigeon.g.dart' as pigeon;
-import 'package:maplibre/src/style/sources/query_source_feature_options.dart';
 
 part 'style_controller.dart';
 
@@ -513,7 +512,7 @@ final class MapLibreMapStateAndroid extends MapLibreMapStateNative {
     return result;
   }
 
-  @override
+  /*@override
   Future<List<Feature<GeometryObject>>> querySourceFeatures(
     String sourceId,
     QuerySourceFeatureOptions? options,
@@ -538,7 +537,7 @@ final class MapLibreMapStateAndroid extends MapLibreMapStateNative {
     });
 
     return result;
-  }
+  }*/
 
   @override
   Future<void> enableLocation({

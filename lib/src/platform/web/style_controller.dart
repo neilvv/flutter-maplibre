@@ -264,4 +264,18 @@ class StyleControllerWeb implements StyleController {
     // TODO: implement getSource
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<Feature<GeometryObject>>> queryGeoJsonSourceFeatures(
+      String sourceId, QuerySourceFeatureOptions? options) {
+    // TODO: implement querySourceFeatures
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Feature<GeometryObject>>> queryVectorSourceFeatures(
+      String sourceId, QuerySourceFeatureOptions? options) {
+    // TODO: implement querySourceFeatures
+    throw UnimplementedError();
+  }
 }

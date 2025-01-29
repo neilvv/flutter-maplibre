@@ -136,12 +136,6 @@ abstract interface class MapController {
   Future<List<Feature>> queryRenderedFeatures(
       Offset screenLocation, List<String> layersIds);
 
-  /// Returns an array of MapGeoJSONFeature objects representing features within the specified vector tile or GeoJSON source that satisfy the query parameters.
-  Future<List<Feature>> querySourceFeatures(
-    String sourceId,
-    QuerySourceFeatureOptions? options,
-  );
-
   /// Show the user location on the map
   Future<void> enableLocation({
     Duration fastestInterval = const Duration(milliseconds: 750),

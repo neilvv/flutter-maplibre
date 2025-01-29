@@ -1,17 +1,30 @@
 import 'dart:typed_data';
 
 import 'package:maplibre/maplibre.dart';
+import 'package:maplibre/src/style/sources/query_source_feature_options.dart';
 
 /// The [StyleController] can be used to manipulate the style of
 /// a [MapLibreMap]. It can be accessed via [MapController.style].
 ///
 /// {@category Basic}
 abstract interface class StyleController {
+  /// Returns an array of MapGeoJSONFeature objects representing features within the specified GeoJSON source that satisfy the query parameters.
+  Future<List<Feature>> queryGeoJsonSourceFeatures(
+    String sourceId,
+    QuerySourceFeatureOptions? options,
+  );
+
+  /// Returns an array of MapGeoJSONFeature objects representing features within the specified Vector source that satisfy the query parameters.
+  Future<List<Feature>> queryVectorSourceFeatures(
+    String sourceId,
+    QuerySourceFeatureOptions? options,
+  );
+
   /// Add a new source to the map.
   Future<void> addSource(Source source);
 
   /// get source by id
-  Future<Source?> getSource(String id);
+  //Future<Source?> getSource(String id);
 
   /// Add a new layer to the map. The source must be added before adding it to
   /// the map.

@@ -16,6 +16,7 @@ export 'src/offline/offline_manager.dart';
 export 'src/offline/offline_region.dart';
 export 'src/permission_manager.dart';
 export 'src/queried_layer.dart';
+export 'src/style/sources/query_source_feature_options.dart';
 export 'src/style/style.dart';
 export 'src/style_controller.dart';
 export 'src/ui/map_compass.dart';

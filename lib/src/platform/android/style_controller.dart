@@ -229,8 +229,68 @@ class StyleControllerAndroid implements StyleController {
   }
 
   @override
-  Source? getSource(String id) {
-    final source = _jniStyle.getSourceAs(id.toJString(), T: jni.Source.type)!;
-    return source;
+  Future<List<Feature<GeometryObject>>> queryVectorSourceFeatures(
+    String sourceId,
+    QuerySourceFeatureOptions? options,
+  ) async {
+    final result = await runOnPlatformThread<List<Feature>>(() async {
+      final source =
+          _jniStyle.getSourceAs(sourceId.toJString(), T: jni.VectorSource.type);
+
+      if (source == null) {
+        return [];
+      }
+
+      //final jniVectorSource = s as jni.VectorSource;
+      final strings = JArray.filled(1, JString.fromString(''));
+      strings[0] = JString.fromString(options!.sourceLayer!);
+      final jniFeatures = source.querySourceFeatures(
+        strings,
+        null,
+      );
+      source.release();
+      return jniFeatures.map((feature) {
+        final featureJsonStr =
+            feature.toJson()!.toDartString(releaseOriginal: true);
+        final featureJson = json.decode(featureJsonStr) as Map<String, dynamic>;
+        return Feature.fromJson(featureJson);
+      }).toList();
+    });
+
+    return result;
+  }
+
+  @override
+  Future<List<Feature<GeometryObject>>> queryGeoJsonSourceFeatures(
+    String sourceId,
+    QuerySourceFeatureOptions? options,
+  ) async {
+    final result = await runOnPlatformThread<List<Feature>>(() async {
+      final source = _jniStyle.getSourceAs(
+        sourceId.toJString(),
+        T: jni.GeoJsonSource.type,
+      );
+
+      if (source == null) {
+        return [];
+      }
+
+      JObject? filter;
+      if (options != null && options.filter != null) {
+        filter = JString.fromString(options.filter!);
+      }
+      final jniFeatures = source.querySourceFeatures(
+        filter,
+      );
+      source.release();
+      return jniFeatures.map((feature) {
+        final featureJsonStr =
+            feature.toJson()!.toDartString(releaseOriginal: true);
+        final featureJson = json.decode(featureJsonStr) as Map<String, dynamic>;
+        return Feature.fromJson(featureJson);
+      }).toList();
+    });
+
+    return result;
   }
 }
